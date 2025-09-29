@@ -10,11 +10,11 @@ import { FloatingDots, GridPattern } from "./FloatingElements";
 
 export function EnhancedHero() {
   return (
-    <section className="relative overflow-hidden bg-background min-h-screen flex items-center">
+    <section className="relative overflow-hidden bg-background min-h-[calc(100vh-4rem)] flex items-center">
       <GridPattern />
       <FloatingDots />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="max-w-2xl">
             {/* Trust Badge */}

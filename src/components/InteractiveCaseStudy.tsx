@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, Clock, CheckCircle } from "lucide-react";
+import { TrendingUp, Users, Clock, CheckCircle, ArrowRight } from "lucide-react";
 import { CaseStudy } from "@/data/caseStudies";
 import Image from "next/image";
 
@@ -56,7 +57,8 @@ export function InteractiveCaseStudy({ caseStudy, index }: InteractiveCaseStudyP
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className="overflow-hidden border-border/50 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 cursor-pointer">
+      <Link href={`/case-studies/${caseStudy.slug}`}>
+        <Card className="overflow-hidden border-border/50 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 cursor-pointer h-full">
         <div className="relative">
           {/* Image with overlay */}
           <div className="relative h-48 overflow-hidden">
@@ -64,7 +66,7 @@ export function InteractiveCaseStudy({ caseStudy, index }: InteractiveCaseStudyP
               src={images[index] || "/wellness.png"}
               alt={caseStudy.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute top-4 left-4">
@@ -135,98 +137,30 @@ export function InteractiveCaseStudy({ caseStudy, index }: InteractiveCaseStudyP
                 </motion.div>
               </AnimatePresence>
             </Tabs>
+
+            {/* Read More Indicator */}
+            <div className="flex items-center justify-center pt-4 border-t border-border/50">
+              <div className="flex items-center gap-2 text-primary font-medium text-sm group-hover:gap-3 transition-all duration-200">
+                <span>Read Full Case Study</span>
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
           </CardContent>
         </div>
       </Card>
+      </Link>
 
-      {/* Hover Overlay with Detailed Information */}
+      {/* Subtle Hover Effect */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 z-10 pointer-events-none"
+            className="absolute -top-2 -left-2 -right-2 -bottom-2 z-0 pointer-events-none"
           >
-            <Card className="h-full border-primary/50 bg-card/95 backdrop-blur-sm shadow-2xl shadow-primary/20">
-              <CardContent className="p-6 h-full flex flex-col">
-                {/* Header */}
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">
-                    {caseStudy.title}
-                  </h3>
-                  <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                    Detailed View
-                  </Badge>
-                </div>
-
-                {/* All Metrics */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {metrics.map((metric, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm">
-                      <div className="text-primary">{metric.icon}</div>
-                      <div>
-                        <div className="text-xs text-muted-foreground">{metric.label}</div>
-                        <div className="font-medium">{metric.value}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Detailed Content */}
-                <div className="flex-1 overflow-y-auto">
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-4">
-                      <TabsTrigger value="overview">Challenge</TabsTrigger>
-                      <TabsTrigger value="solution">Solution</TabsTrigger>
-                      <TabsTrigger value="impact">Impact</TabsTrigger>
-                    </TabsList>
-                    
-                    <div className="space-y-4">
-                      <TabsContent value="overview" className="m-0">
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-primary">The Challenge</h4>
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {caseStudy.challenge}
-                          </p>
-                        </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="solution" className="m-0">
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-primary">Our Solution</h4>
-                          <ul className="space-y-2">
-                            {caseStudy.solution.map((item, idx) => (
-                              <li key={idx} className="text-sm text-muted-foreground leading-relaxed flex items-start gap-2">
-                                <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                                {item}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="impact" className="m-0">
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-primary">The Impact</h4>
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {caseStudy.impact}
-                          </p>
-                        </div>
-                      </TabsContent>
-                    </div>
-                  </Tabs>
-                </div>
-
-                {/* Hover instruction */}
-                <div className="mt-4 pt-4 border-t border-border/50">
-                  <p className="text-xs text-muted-foreground text-center">
-                    Hover to explore • Click tabs to switch content
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="h-full w-full rounded-lg border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-sm" />
           </motion.div>
         )}
       </AnimatePresence>

@@ -6,11 +6,13 @@ import { PropsWithChildren } from "react";
 type MotionSectionProps = PropsWithChildren<{
   delay?: number;
   className?: string;
+  id?: string;
 }>;
 
-export function MotionSection({ children, delay = 0, className }: MotionSectionProps) {
+export function MotionSection({ children, delay = 0, className, id }: MotionSectionProps) {
   return (
     <motion.section
+      id={id}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}

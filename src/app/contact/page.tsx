@@ -8,27 +8,68 @@ import { Separator } from "@/components/ui/separator";
 import { MotionSection } from "@/components/MotionSection";
 import { AnimatedText, SlideUpText } from "@/components/AnimatedText";
 import { FloatingDots, GridPattern } from "@/components/FloatingElements";
-import { Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function ContactPage() {
   const [status, setStatus] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
+    projectType: "web-development"
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
-  async function onSubmit(formData: FormData) {
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.name.trim()) newErrors.name = "Full name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    if (!formData.message.trim()) newErrors.message = "Project description is required";
+    if (formData.message.trim().length < 20) {
+      newErrors.message = "Please provide more details about your project (at least 20 characters)";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
     setSubmitting(true);
     setStatus(null);
     setIsSuccess(false);
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(formData.entries())),
+        body: JSON.stringify(formData),
       });
       const json: { message?: string; ok?: boolean } = await res.json();
       if (!res.ok) throw new Error(json.message || "Failed to submit");
       setStatus("Thanks! We'll get back within 1 business day.");
       setIsSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: "",
+        projectType: "web-development"
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong.";
       setStatus(message);
@@ -37,6 +78,13 @@ export default function ContactPage() {
       setSubmitting(false);
     }
   }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: "" }));
+    }
+  };
 
   const contactInfo = [
     {
@@ -68,11 +116,11 @@ export default function ContactPage() {
   return (
     <div className="font-sans">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-background min-h-[50vh] flex items-center">
+      <section className="relative overflow-hidden bg-background min-h-[calc(50vh-4rem)] flex items-center">
         <GridPattern />
         <FloatingDots />
         
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-12 sm:pb-16">
           <div className="text-center max-w-4xl mx-auto">
             {/* Trust Badge */}
             <SlideUpText>
@@ -121,7 +169,7 @@ export default function ContactPage() {
             <AnimatedText delay={0.1}>
               <Card className="border-border/50">
                 <CardContent className="p-6">
-                  <form action={onSubmit} className="space-y-6">
+                  <form onSubmit={onSubmit} className="space-y-6">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label htmlFor="name" className="text-sm font-medium">
@@ -129,11 +177,14 @@ export default function ContactPage() {
                         </label>
                         <input
                           id="name"
-                          name="name"
-                          required
-                          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          value={formData.name}
+                          onChange={(e) => handleInputChange("name", e.target.value)}
+                          className={`w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                            errors.name ? "border-red-500" : "border-border"
+                          }`}
                           placeholder="John Doe"
                         />
+                        {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                       </div>
                       <div className="space-y-2">
                         <label htmlFor="email" className="text-sm font-medium">
@@ -142,11 +193,14 @@ export default function ContactPage() {
                         <input
                           id="email"
                           type="email"
-                          name="email"
-                          required
-                          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange("email", e.target.value)}
+                          className={`w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                            errors.email ? "border-red-500" : "border-border"
+                          }`}
                           placeholder="john@company.com"
                         />
+                        {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                       </div>
                     </div>
 
@@ -157,8 +211,9 @@ export default function ContactPage() {
                         </label>
                         <input
                           id="phone"
-                          name="phone"
                           type="tel"
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange("phone", e.target.value)}
                           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                           placeholder="+1 (555) 000-0000"
                         />
@@ -169,11 +224,32 @@ export default function ContactPage() {
                         </label>
                         <input
                           id="company"
-                          name="company"
+                          value={formData.company}
+                          onChange={(e) => handleInputChange("company", e.target.value)}
                           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                           placeholder="Your Company"
                         />
                       </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="projectType" className="text-sm font-medium">
+                        Project Type
+                      </label>
+                      <select
+                        id="projectType"
+                        value={formData.projectType}
+                        onChange={(e) => handleInputChange("projectType", e.target.value)}
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      >
+                        <option value="web-development">Web Development</option>
+                        <option value="mobile-app">Mobile App</option>
+                        <option value="ai-ml">AI/ML Solution</option>
+                        <option value="data-engineering">Data Engineering</option>
+                        <option value="cloud-infrastructure">Cloud Infrastructure</option>
+                        <option value="consulting">Technical Consulting</option>
+                        <option value="other">Other</option>
+                      </select>
                     </div>
 
                     <div className="space-y-2">
@@ -182,12 +258,18 @@ export default function ContactPage() {
                       </label>
                       <textarea
                         id="message"
-                        name="message"
-                        required
+                        value={formData.message}
+                        onChange={(e) => handleInputChange("message", e.target.value)}
                         rows={5}
-                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                        className={`w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none ${
+                          errors.message ? "border-red-500" : "border-border"
+                        }`}
                         placeholder="Tell us about your project, goals, timeline, and any specific requirements..."
                       />
+                      {errors.message && <p className="text-xs text-red-500">{errors.message}</p>}
+                      <div className="text-xs text-muted-foreground">
+                        {formData.message.length}/500 characters
+                      </div>
                     </div>
 
                     <Button
@@ -197,7 +279,10 @@ export default function ContactPage() {
                       size="lg"
                     >
                       {submitting ? (
-                        "Sending..."
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Sending...
+                        </>
                       ) : (
                         <>
                           Send Message
@@ -208,8 +293,8 @@ export default function ContactPage() {
 
                     {status && (
                       <div className={`flex items-center gap-2 p-3 rounded-md text-sm ${
-                        isSuccess 
-                          ? "bg-green-500/10 text-green-400 border border-green-500/20" 
+                        isSuccess
+                          ? "bg-green-500/10 text-green-400 border border-green-500/20"
                           : "bg-red-500/10 text-red-400 border border-red-500/20"
                       }`}>
                         {isSuccess ? (
@@ -288,6 +373,79 @@ export default function ContactPage() {
                 </CardContent>
               </Card>
             </AnimatedText>
+          </div>
+        </div>
+      </MotionSection>
+
+      <Separator className="my-8" />
+
+      {/* FAQ Section */}
+      <MotionSection className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <SlideUpText>
+              <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary border-primary/20">
+                Frequently Asked Questions
+              </Badge>
+            </SlideUpText>
+            <AnimatedText delay={0.1}>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Common Questions
+              </h2>
+            </AnimatedText>
+            <AnimatedText delay={0.2}>
+              <p className="text-muted-foreground">
+                Here are answers to some of the most common questions we receive.
+              </p>
+            </AnimatedText>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                question: "How quickly can you start on my project?",
+                answer: "We typically begin new projects within 1-2 weeks, depending on our current capacity and your project requirements. We'll provide a clear timeline during our initial consultation."
+              },
+              {
+                question: "Do you work with startups or only enterprise clients?",
+                answer: "We work with both startups and enterprises! Many of our most successful projects have been with early-stage startups where we've served as technical co-founders and helped them scale from 0 to 1."
+              },
+              {
+                question: "What industries do you specialize in?",
+                answer: "We have deep expertise across healthcare & wellness, fintech, agritech, enterprise software, and government/public sector projects. However, we're technology-agnostic and can adapt to any industry."
+              },
+              {
+                question: "Do you provide ongoing support after project completion?",
+                answer: "Absolutely! We believe in building long-term partnerships. We offer various support packages including monitoring, maintenance, feature updates, and technical consulting to ensure your solution continues to deliver value."
+              },
+              {
+                question: "What's your typical project timeline?",
+                answer: "Project timelines vary based on scope and complexity. MVP development typically takes 8-12 weeks, while full-scale platform development can range from 3-6 months. We'll provide detailed timelines during our discovery call."
+              }
+            ].map((faq, idx) => (
+              <AnimatedText key={faq.question} delay={idx * 0.1}>
+                <Card className="border-border/50 hover:border-primary/50 transition-colors duration-300">
+                  <CardContent className="p-6">
+                    <button
+                      onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+                      className="w-full flex items-center justify-between text-left"
+                    >
+                      <h3 className="font-semibold text-lg pr-4">{faq.question}</h3>
+                      {expandedFaq === idx ? (
+                        <ChevronUp className="h-5 w-5 text-primary flex-shrink-0" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-primary flex-shrink-0" />
+                      )}
+                    </button>
+                    {expandedFaq === idx && (
+                      <p className="mt-4 text-muted-foreground leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </AnimatedText>
+            ))}
           </div>
         </div>
       </MotionSection>

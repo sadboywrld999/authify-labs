@@ -44,7 +44,39 @@ export function CaseStudySticky({ items = caseStudies }: { items?: CaseStudy[] }
 
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      {/* Mobile Layout */}
+      <div className="lg:hidden space-y-8">
+        {items.map((cs) => (
+          <article key={cs.id} className="space-y-4">
+            <div className="h-[40vh] rounded-2xl border overflow-hidden" style={{ borderColor: "var(--border)", backgroundColor: "var(--sand)" }}>
+              <div className="relative h-full w-full">
+                {(() => {
+                  const title = cs.id;
+                  const src =
+                    title === "wellness-infra" ? "/wellness.png" :
+                    title === "urban-gardening-d2c" ? "/gardening.png" :
+                    title === "radar-smart-cities" ? "/radar.png" :
+                    "/atheryn.png";
+                  return (
+                    <Image src={src} alt={cs.title} fill className="object-cover" />
+                  );
+                })()}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold h-heading">{cs.title}</h3>
+              <p className="mt-3 text-muted">{cs.teaser}</p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link href={`/case-studies/${cs.slug}`} className="btn btn-primary text-center">Read more</Link>
+                <Link href="/contact" className="btn btn-outline text-center">Discuss your project</Link>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
         <div className="grid gap-16">
           {items.map((cs, idx) => (
             <article
@@ -66,7 +98,7 @@ export function CaseStudySticky({ items = caseStudies }: { items?: CaseStudy[] }
           ))}
         </div>
 
-        <div className="hidden lg:block sticky top-24 h-[70vh] rounded-2xl border" style={{ borderColor: "var(--border)", backgroundColor: "var(--sand)" }}>
+        <div className="sticky top-24 h-[70vh] rounded-2xl border" style={{ borderColor: "var(--border)", backgroundColor: "var(--sand)" }}>
           <div className="relative h-full w-full overflow-hidden rounded-2xl">
             <AnimatePresence mode="wait">
               <motion.div

@@ -153,11 +153,11 @@ export default function SolutionsPage() {
   return (
     <div className="font-sans">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-background min-h-[60vh] flex items-center">
+      <section className="relative overflow-hidden bg-background min-h-[calc(60vh-4rem)] flex items-center">
         <GridPattern />
         <FloatingDots />
         
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-12 sm:pb-16">
           <div className="text-center max-w-4xl mx-auto">
             {/* Trust Badge */}
             <SlideUpText>
@@ -231,10 +231,10 @@ export default function SolutionsPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {industries.map((industry, idx) => (
             <AnimatedText key={industry.title} delay={idx * 0.1}>
-              <Card className="group h-full hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border-border/50 hover:border-primary/50">
+              <Card className="group h-full hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 border-border/50 hover:border-primary/50 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="text-primary group-hover:scale-110 transition-transform duration-300">
+                    <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white group-hover:scale-110 transition-all duration-300">
                       {industry.icon}
                     </div>
                     <h3 className="font-semibold text-xl group-hover:text-primary transition-colors duration-300">
@@ -249,8 +249,8 @@ export default function SolutionsPage() {
                     <ul className="space-y-1">
                       {industry.solutions.map((solution, solutionIdx) => (
                         <li key={solutionIdx} className="text-xs text-muted-foreground flex items-start gap-2">
-                          <div className="h-1 w-1 rounded-full bg-primary mt-1.5 flex-shrink-0" />
-                          {solution}
+                          <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 flex-shrink-0 group-hover:scale-125 transition-transform duration-300" />
+                          <span className="group-hover:text-foreground transition-colors duration-300">{solution}</span>
                         </li>
                       ))}
                     </ul>
@@ -259,6 +259,54 @@ export default function SolutionsPage() {
                     <p className="text-xs text-muted-foreground italic">
                       {industry.caseStudy}
                     </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </AnimatedText>
+          ))}
+        </div>
+      </MotionSection>
+
+      <Separator className="my-8" />
+
+      {/* Success Metrics Section */}
+      <MotionSection className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="text-center mb-12">
+          <SlideUpText>
+            <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary border-primary/20">
+              Proven Results
+            </Badge>
+          </SlideUpText>
+          <AnimatedText delay={0.1}>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Measurable Impact Across Industries
+            </h2>
+          </AnimatedText>
+          <AnimatedText delay={0.2}>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our solutions deliver tangible results that drive business growth and operational excellence.
+            </p>
+          </AnimatedText>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { metric: "98%", label: "Client Satisfaction", icon: <TrendingUp className="h-6 w-6" /> },
+            { metric: "50+", label: "Projects Delivered", icon: <BarChart3 className="h-6 w-6" /> },
+            { metric: "15%", label: "Average ROI Improvement", icon: <Zap className="h-6 w-6" /> },
+            { metric: "6", label: "Industries Served", icon: <Globe className="h-6 w-6" /> }
+          ].map((stat, idx) => (
+            <AnimatedText key={stat.label} delay={idx * 0.1}>
+              <Card className="group text-center hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border-border/50 hover:border-primary/50">
+                <CardContent className="p-6">
+                  <div className="text-primary mb-4 flex justify-center group-hover:scale-110 transition-transform duration-300">
+                    {stat.icon}
+                  </div>
+                  <div className="text-3xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                    {stat.metric}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {stat.label}
                   </div>
                 </CardContent>
               </Card>
@@ -292,7 +340,7 @@ export default function SolutionsPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {solutionTypes.map((solution, idx) => (
             <AnimatedText key={solution.title} delay={idx * 0.1}>
-              <Card className="group h-full hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border-border/50 hover:border-primary/50 text-center">
+              <Card className="group h-full hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 border-border/50 hover:border-primary/50 text-center hover:-translate-y-2">
                 <CardContent className="p-6">
                   <div className="text-primary mb-4 flex justify-center group-hover:scale-110 transition-transform duration-300">
                     {solution.icon}
@@ -303,12 +351,17 @@ export default function SolutionsPage() {
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                     {solution.description}
                   </p>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {solution.technologies.map((tech, techIdx) => (
-                      <span key={techIdx} className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded mr-1 mb-1">
+                      <span key={techIdx} className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded mr-1 mb-1 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                         {tech}
                       </span>
                     ))}
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-border/50">
+                    <div className="text-xs text-muted-foreground">
+                      {solution.technologies.length} technologies supported
+                    </div>
                   </div>
                 </CardContent>
               </Card>

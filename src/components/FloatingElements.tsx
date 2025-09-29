@@ -10,7 +10,10 @@ export function FloatingDots() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  // Return a placeholder during SSR to prevent hydration mismatch
+  if (!mounted) {
+    return <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ height: 0, width: 0 }} />;
+  }
 
   const dots = Array.from({ length: 20 }, (_, i) => ({
     id: i,
