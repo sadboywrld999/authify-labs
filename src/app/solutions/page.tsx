@@ -18,7 +18,6 @@ import {
   Database,
   Bot,
   BarChart3,
-  Users,
   Zap,
   Target,
   Globe,

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { caseStudies } from "@/data/caseStudies";
 import type { CaseStudy } from "@/data/caseStudies";
 
@@ -29,7 +30,9 @@ export function CaseStudySticky({ items = caseStudies }: { items?: CaseStudy[] }
               bestIdx = i;
             }
           }
-          if (bestIdx !== active) setActive(bestIdx);
+          setActive((currentActive) => {
+            return bestIdx !== currentActive ? bestIdx : currentActive;
+          });
         },
         { root: null, rootMargin: "-30% 0px -30% 0px", threshold: thresholds }
       );
@@ -82,7 +85,7 @@ export function CaseStudySticky({ items = caseStudies }: { items?: CaseStudy[] }
                     title === "radar-smart-cities" ? "/radar.png" :
                     "/atheryn.png";
                   return (
-                    <img src={src} alt={items[active]?.title || "Case"} className="h-full w-full object-cover" />
+                    <Image src={src} alt={items[active]?.title || "Case"} fill className="object-cover" />
                   );
                 })()}
               </motion.div>
