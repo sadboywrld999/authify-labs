@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+:root {
+  /* Dark Theme Variables */
+  --background: #0a0a0a; /* Deep Charcoal */
+  --foreground: #ffffff; /* White text for headings */
+  --text-muted: #e4e4e7; /* Brighter light grey for body text */
+
+  --primary: #3A6D7C; /* Muted Teal */
+  --primary-hover: #6D8B74; /* Moss Green */
+
+  --accent-clay: #C97B63; /* Warm Clay (sparingly) */
+  --border: #27272a; /* Dark border */
+
+  --charcoal: #0a0a0a;
+  --sand: #18181b; /* Dark surface */
+  --fog: #27272a;
+  --slate-blue: #53687E;
+
+  /* shadcn/ui dark theme overrides */
+  --card: #18181b;
+  --card-foreground: #ffffff;
+  --popover: #18181b;
+  --popover-foreground: #ffffff;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #ffffff;
+  --muted: #27272a;
+  --muted-foreground: #e4e4e7;
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --input: #27272a;
+  --ring: #3A6D7C;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent-clay);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html, body { 
+  height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+}
+
+/* Typography colors */
+.h-heading { color: var(--foreground); }
+.text-muted { color: var(--text-muted); }
+
+/* Surfaces */
+.card { 
+  background: var(--sand); 
+  border: 1px solid var(--border); 
+  border-radius: 12px; 
+}
+.surface { background: var(--sand); }
+
+/* Buttons */
+.btn { 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-weight: 600; 
+  border-radius: 8px; 
+  padding: 10px 16px; 
+  transition: all .2s ease; 
+}
+.btn-primary { 
+  background: var(--primary); 
+  color: #fff; 
+}
+.btn-primary:hover { 
+  background: var(--primary-hover); 
+  transform: translateY(-1px); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08); 
+}
+.btn-outline { 
+  border: 1px solid var(--border); 
+  color: var(--foreground); 
+  background: transparent; 
+}
+.btn-outline:hover { 
+  background: var(--sand); 
+}
+
+/* Header */
+.header { 
+  position: sticky; 
+  top: 0; 
+  backdrop-filter: saturate(180%) blur(8px); 
+  background: rgba(10,10,10,0.8); 
+  border-bottom: 1px solid var(--border); 
+  z-index: 50;
+}
+
+/* Hero section */
+.hero-dark { 
+  background: var(--charcoal); 
+  color: #fff; 
+}
+.hero-dark .subtle { 
+  color: rgba(255,255,255,.8); 
+}
+
+/* Grid pattern for background */
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
